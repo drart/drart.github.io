@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <meta http-equiv="origin-trial" content="Aqu+YJyJmAcDBswrSlPbXDcQ/lPix0q7ivV5xyCwOH+vKujvVPTPJt8hErs3lOC57VtLKgEKLvfQPm3+Ft2QkwsAAABeeyJvcmlnaW4iOiJodHRwczovL3dlYmJsdWV0b290aGNnLmdpdGh1Yi5pbzo0NDMiLCJmZWF0dXJlIjoiV2ViQmx1ZXRvb3RoIiwiZXhwaXJ5IjoxNDgzNjM0ODUwfQ==">
+    </head>
+    <body>
+        <script>
+            function test(){
+                navigator.bluetooth.requestDevice({ filters: [{ services: ['battery_service'] }] })
+                .then(device => { console.log(this) })
+                .catch(error => { console.log(error); });
+            }
+
+        </script>
+        <button onclick="test()"></button>
+    </body>
+</html>
