@@ -1,0 +1,23 @@
+<html>
+    <body>
+        <script>
+            var myoservice = 'd5060001-a904-deb9-4748-2c7f4a124842';
+
+            navigator.bluetooth.requestDevice({ filters: [{ services: [myoservice] }] })
+            .then(device => device.gatt.connect())
+            .then(server => server.getPrimaryService(myservice))
+            .then(service => service.getCharacteristic('FirmwareVersionCharacteristic'))
+            .then(characteristic => {
+                  // Writing 1 is the signal to reset energy expended.
+                    return characteristic.readValue();
+             })
+            .then(value => {
+                    console.log('Firmware version: ' + value);
+            })
+            .catch(error => { console.log(error); });
+
+
+
+        </script>
+    </body>
+</html>
