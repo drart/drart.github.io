@@ -1,6 +1,7 @@
 <html>
     <body>
         <script>
+            function findMyos(){
             var myoservice = 'd5060001-a904-deb9-4748-2c7f4a124842';
 
             navigator.bluetooth.requestDevice({ filters: [{ services: [myoservice] }] })
@@ -17,7 +18,8 @@
             .catch(error => { console.log(error); });
 
 
-
+            }
         </script>
+        <button onclick="findMyos()"></button>
     </body>
 </html>
