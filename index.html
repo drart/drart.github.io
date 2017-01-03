@@ -10,7 +10,7 @@
 
             navigator.bluetooth.requestDevice({ filters: [{ services: [myoservice] }] })
             .then(device => device.gatt.connect())
-            .then(server => server.getPrimaryService(myservice))
+            .then(server => server.getPrimaryService(myoservice))
             .then(service => service.getCharacteristic('FirmwareVersionCharacteristic'))
             .then(characteristic => {
                   // Writing 1 is the signal to reset energy expended.
