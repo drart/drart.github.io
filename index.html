@@ -11,7 +11,7 @@
             navigator.bluetooth.requestDevice({ filters: [{ services: [myoservice] }] })
             .then(device => device.gatt.connect())
             .then(server => server.getPrimaryService(myoservice))
-            .then(service => service.getCharacteristic('FirmwareVersionCharacteristic'))
+            .then(service => service.getCharacteristic(0x0201)) // FirmwareVersionCharacteristic 
             .then(characteristic => {
                   // Writing 1 is the signal to reset energy expended.
                     return characteristic.readValue();
@@ -25,5 +25,9 @@
             }
         </script>
         <button onclick="findMyos()"></button>
+        <div id="devicename"></div>
+        <div id=""></div>
+        <div id=""></div>
+        <div id=""></div>
     </body>
 </html>
