@@ -19,12 +19,14 @@
     <body>
         <script>
             function findMyos(){
-            var myoservice = 'd5060001-a904-deb9-4748-2c7f4a124842';
+            var ControlService = 'd5060001-a904-deb9-4748-2c7f4a124842';
+            var FirmwareVersionCharacteristic = 'd5060201-a904-deb9-4748-2c7f4a124842';
+            var MyoInfoCharacteristic = 'd5060101-a904-deb9-4748-2c7f4a124842';
 
-            navigator.bluetooth.requestDevice({ filters: [{ services: [myoservice] }] })
+            navigator.bluetooth.requestDevice({ filters: [{ services: [ControlService] }] })
             .then(device => device.gatt.connect())
-            .then(server => server.getPrimaryService(myoservice))
-            .then(service => service.getCharacteristic(0x0201)) // FirmwareVersionCharacteristic 
+            .then(server => server.getPrimaryService(ControlService))
+            .then(service => service.getCharacteristic(FirmwareVersionCharacteristic)) 
             .then(characteristic => {
                   // Writing 1 is the signal to reset energy expended.
                     return characteristic.readValue();
@@ -37,7 +39,7 @@
 
             }
         </script>
-        <div onclick="findMyos()">Connect to Myo</button>
+        <div class="button" onclick="findMyos()">Connect to Myo</div>
         <div id="devicename"></div>
         <div id=""></div>
         <div id=""></div>
