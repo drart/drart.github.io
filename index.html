@@ -33,10 +33,9 @@
              })
             .then(value => {
                 var buf = new Uint16Array(value.buffer);
-                var responsestring = String.fromCharCode.apply(null, String,buf);
+                String.fromCharCode.apply(null, String,buf);
 
-                console.log('Firmware version: ' + responsestring);
-                console.log('buffer : ' + buf);
+                console.log('Firmware version: ' + buf[0] + '.' + buf[1] + '.' + buf[2] + '.' + buf[3]);
             })
             .catch(error => { console.log(error); });
 
