@@ -28,7 +28,7 @@
                 document.getElementById('connect').style.backgroundColor = 'blue';
                 document.getElementById('connect').style.borderColor = 'black';
 
-                return eevice.gatt.connect();
+                return device.gatt.connect();
             })
             .then(server => server.getPrimaryService(ControlService))
             .then(service => service.getCharacteristic(FirmwareVersionCharacteristic)) 
@@ -39,17 +39,15 @@
             .then(value => {
                 var buf = new Uint16Array(value.buffer);
                 String.fromCharCode.apply(null, String,buf);
-
-                console.log('Firmware version: ' + buf[0] + '.' + buf[1] + '.' + buf[2] + '.' + buf[3]);
+                document.getElementById('firmware').html = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
             })
             .catch(error => { console.log(error); });
-
 
             }
         </script>
         <div id ="connect" class="button" onclick="findMyos()">Connect to Myo</div>
         <div id="devicename"></div>
-        <div id=""></div>
+        <div id="firmware"></div>
         <div id=""></div>
         <div id=""></div>
     </body>
