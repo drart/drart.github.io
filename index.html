@@ -32,7 +32,7 @@
                     return characteristic.readValue();
              })
             .then(value => {
-                    console.log('Firmware version: ' + value);
+                    console.log('Firmware version: ' + value.length);
             })
             .catch(error => { console.log(error); });
 
