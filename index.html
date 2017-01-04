@@ -24,10 +24,11 @@
 
             navigator.bluetooth.requestDevice({ filters: [{ services: [ControlService] }] })
             .then(device => {
-                device.gatt.connect();
                 document.getElementById('devicename').html = device.name;
                 document.getElementById('connect').style.backgroundColor = 'blue';
                 document.getElementById('connect').style.borderColor = 'black';
+
+                return eevice.gatt.connect();
             })
             .then(server => server.getPrimaryService(ControlService))
             .then(service => service.getCharacteristic(FirmwareVersionCharacteristic)) 
