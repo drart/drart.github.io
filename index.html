@@ -32,8 +32,11 @@
                     return characteristic.readValue();
              })
             .then(value => {
-                    console.log('Firmware version: ' + value.buffer);
-                    console.log('buffer bits: ' + value.byteLength);
+                var buf = new Uint8Array(value.buffer);
+                var responsestring = String.fromCharCode.apply(String,buf);
+
+                console.log('Firmware version: ' + responsestring);
+                //console.log('buffer bits: ' + value.byteLength);
             })
             .catch(error => { console.log(error); });
 
