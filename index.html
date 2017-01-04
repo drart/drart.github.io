@@ -24,7 +24,7 @@
 
             navigator.bluetooth.requestDevice({ filters: [{ services: [ControlService] }] })
             .then(device => {
-                document.getElementById('devicename').html = device.name;
+                document.getElementById('devicename').innerHTML = device.name;
                 document.getElementById('connect').style.backgroundColor = 'blue';
                 document.getElementById('connect').style.borderColor = 'black';
 
@@ -39,7 +39,7 @@
             .then(value => {
                 var buf = new Uint16Array(value.buffer);
                 String.fromCharCode.apply(null, String,buf);
-                document.getElementById('firmware').html = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
+                document.getElementById('firmware').innerHTML = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
             })
             .catch(error => { console.log(error); });
 
