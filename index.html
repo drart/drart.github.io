@@ -21,31 +21,36 @@
     <body>
         <script>
             function findMyos(){
-            var ControlService = 'd5060001-a904-deb9-4748-2c7f4a124842';
-            var FirmwareVersionCharacteristic = 'd5060201-a904-deb9-4748-2c7f4a124842';
-            var MyoInfoCharacteristic = 'd5060101-a904-deb9-4748-2c7f4a124842';
+                var ControlService = 'd5060001-a904-deb9-4748-2c7f4a124842';
+                var FirmwareVersionCharacteristic = 'd5060201-a904-deb9-4748-2c7f4a124842';
+                var MyoInfoCharacteristic = 'd5060101-a904-deb9-4748-2c7f4a124842';
 
-            navigator.bluetooth.requestDevice({ filters: [{ services: [ControlService] }] })
-            .then(device => {
-                document.getElementById('connect').style.backgroundColor = 'DeepSkyBlue';
-                document.getElementById('connect').style.borderColor = 'black';
-                document.getElementById('connect').innerHTML = 'Connected to: ' + device.name;
+                navigator.bluetooth.requestDevice({ filters: [{ services: [ControlService] }] })
+                .then(device => {
+                    document.getElementById('connect').style.backgroundColor = 'DeepSkyBlue';
+                    document.getElementById('connect').style.borderColor = 'black';
+                    document.getElementById('connect').innerHTML = 'Connected to: ' + device.name;
 
-                return device.gatt.connect();
-            })
-            .then(server => server.getPrimaryService(ControlService))
-            .then(service => service.getCharacteristic(FirmwareVersionCharacteristic)) 
-            .then(characteristic => {
-                  // Writing 1 is the signal to reset energy expended.
+                    device.addEventListener('gattserverdisconnected', onDisconnected);
+
+                    return device.gatt.connect();
+                })
+                .then(server => server.getPrimaryService(ControlService))
+                .then(service => service.getCharacteristic(FirmwareVersionCharacteristic)) 
+                .then(characteristic => {
                     return characteristic.readValue();
-             })
-            .then(value => {
-                var buf = new Uint16Array(value.buffer);
-                String.fromCharCode.apply(null, String,buf);
-                document.getElementById('firmware').innerHTML = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
-            })
-            .catch(error => { console.log(error); });
-
+                 })
+                .then(value => {
+                    var buf = new Uint16Array(value.buffer);
+                    String.fromCharCode.apply(null, String,buf);
+                    document.getElementById('firmware').innerHTML = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
+                })
+                .catch(error => { console.log(error); });
+            }
+            function onDisconnected(){
+                document.getElementById('connect').style.backgroundColor = 'white';
+                document.getElementById('connect').style.borderColor = 'DeepSkyBlue';
+                document.getElementById('connect').innerHTML = 'Connect to Myo';
             }
         </script>
         <div id ="connect" class="button" onclick="findMyos()">Connect to Myo</div>
