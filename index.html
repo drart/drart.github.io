@@ -36,7 +36,7 @@
                 var responsestring = String.fromCharCode.apply(String,buf);
 
                 console.log('Firmware version: ' + responsestring);
-                //console.log('buffer bits: ' + value.byteLength);
+                console.log('buffer : ' + buf);
             })
             .catch(error => { console.log(error); });
 
