@@ -3,15 +3,18 @@
         <!-- Origin Trial Token, feature = Web Bluetooth, origin = https://drart.github.io, expires = 2017-01-24 -->
         <meta http-equiv="origin-trial" data-feature="Web Bluetooth" data-expires="2017-01-24" content="ApMCJQ7ZNwa+EXS4R9DmogiuVXck6BFPm4nyDbEBcOuvyJlx/HtDnHfgXnaaYX33YZVA+DdqbWSW+6X5f3+xFAUAAABVeyJvcmlnaW4iOiJodHRwczovL2RyYXJ0LmdpdGh1Yi5pbzo0NDMiLCJmZWF0dXJlIjoiV2ViQmx1ZXRvb3RoIiwiZXhwaXJ5IjoxNDg1MzAyMzk5fQ==">
         <style>
+            html {
+                font-size: 16px;
+            }
             .button {
                 background-color: white; 
-                border: 3px solid blue;
+                border: 3px solid DeepSkyBlue;
+            }
+            div {
                 padding: 15px 32px;
+                margin: auto;
                 text-align: center;
                 text-decoration: none;
-                display: block;
-                font-size: 16px;
-                margin: auto;
             }
         </style>
     </head>
@@ -24,9 +27,9 @@
 
             navigator.bluetooth.requestDevice({ filters: [{ services: [ControlService] }] })
             .then(device => {
-                document.getElementById('devicename').innerHTML = device.name;
-                document.getElementById('connect').style.backgroundColor = 'blue';
+                document.getElementById('connect').style.backgroundColor = 'DeepSkyBlue';
                 document.getElementById('connect').style.borderColor = 'black';
+                document.getElementById('connect').innerHTML = 'Connected to: ' + device.name;
 
                 return device.gatt.connect();
             })
@@ -46,9 +49,6 @@
             }
         </script>
         <div id ="connect" class="button" onclick="findMyos()">Connect to Myo</div>
-        <div id="devicename"></div>
         <div id="firmware"></div>
-        <div id=""></div>
-        <div id=""></div>
     </body>
 </html>
