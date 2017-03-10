@@ -26,7 +26,8 @@
                 var BatteryService = 0x180f;
 
                 var FirmwareVersionCharacteristic = 'd5060201-a904-deb9-4748-2c7f4a124842';
-                var MyoInfoCharacteristic = 'd5060101-a904-deb9-4748-2c7f4a124842';
+                var MyoInfoCharacteristic =         'd5060101-a904-deb9-4748-2c7f4a124842';
+                var BatteryCharacteristic =         '00002a19-0000-1000-8000-00805f9b34fb';
 
                 var MyoUUID = parseInt(0x06d5);
 
@@ -48,11 +49,24 @@
                         queue = queue.then(_ => service.getCharacteristics().then(characteristics => {
                             console.log('> Service: ' + service.uuid);
                             characteristics.forEach(characteristic => {
+                                console.log('>> Characteristic: ' + characteristic.uuid + ' ' + characteristic);
+
                                 if (characteristic.uuid === FirmwareVersionCharacteristic){
-                                    console.log("firmeware");
-                                }else{
-                                    console.log('>> Characteristic: ' + characteristic.uuid + ' ' + characteristic);
-                                }
+                                    characteristic.readValue().then(value => {
+                                        var buf = new Uint16Array(value.buffer);
+                                        String.fromCharCode.apply(null, String,buf);
+                                        document.getElementById('firmware').innerHTML = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
+                                        // buf[3] is really the hardware version. 
+                                    });
+                                };
+
+                                if (characteristic.uuid === BatteryCharacteristic){
+                                    batteryLevelCharacteristic = characteristic;
+                                    batteryLevelCharacteristic.addEventListener('characteristicvaluechanged', handleBatteryLevelChanged);
+                                    batteryLevelCharacteristic.startNotifications()
+                                    batteryLevelCharacteristic.readValue();
+                                };
+                                
                             });
                         }));
                     });
@@ -67,13 +81,15 @@
                 document.getElementById('connect').style.borderColor = 'DeepSkyBlue';
                 document.getElementById('connect').innerHTML = 'Connect to Myo';
             }
-            function firmwareversion(){
-                var buf = new Uint16Array(value.buffer);
-                String.fromCharCode.apply(null, String,buf);
-                document.getElementById('firmware').innerHTML = 'Firmware version: '+buf[0]+'.'+buf[1]+'.'+buf[2]+'.'+buf[3];
-            };
+
+            function handleBatteryLevelChanged(event) {
+                let batteryLevel = event.target.value.getUint8(0);
+                document.getElementById('battery').innerHTML = 'Battery Level is: '+ batteryLevel +'%';
+            }
+                                
         </script>
         <div id ="connect" class="button" onclick="findMyos()">Connect to Myo</div>
         <div id="firmware"></div>
+        <div id="battery"></div>
     </body>
 </html>
