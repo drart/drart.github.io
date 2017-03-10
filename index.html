@@ -28,6 +28,9 @@
                 var FirmwareVersionCharacteristic = 'd5060201-a904-deb9-4748-2c7f4a124842';
                 var MyoInfoCharacteristic =         'd5060101-a904-deb9-4748-2c7f4a124842';
                 var BatteryCharacteristic =         '00002a19-0000-1000-8000-00805f9b34fb';
+                var CommandCharacteristic =         'd5060401-a904-deb9-4748-2c7f4a124842';
+                var ClassifierEventCharacteristic = 'd5060103-a904-deb9-4748-2c7f4a124842';
+                var IMUDataCharacteristic =         'd5060402-a904-deb9-4748-2c7f4a124842';
 
                 var MyoUUID = parseInt(0x06d5);
 
@@ -51,6 +54,30 @@
                             characteristics.forEach(characteristic => {
                                 console.log('>> Characteristic: ' + characteristic.uuid + ' ' + characteristic);
 
+                                // set IMU and Classifier on. EMG off.
+                                if (characteristic.uuid === CommandCharacteristic){
+                                    let commandBuffer = new Uint16Array([0x01,3,0x00,0x01,0x01]);
+                                    characteristic.writeValue(commandBuffer).then(function() {
+                                        let vibrateBuffer = new Uint16Array([0x03,1,0x02]);
+                                        characteristic.writeValue(vibrateBuffer).then( function(){
+                                            console.log(commandBuffer);
+                                        }); 
+                                    }); 
+                                }
+
+                                if (characteristic.uuid === IMUDataCharacteristic){
+                                    let IMUCharacteristic = characteristic;
+                                    IMUCharacteristic.addEventListener('characteristicvaluechanged', handleIMUEvents);
+                                    IMUCharacteristic.startNotifications();
+                                }
+
+                                if (characteristic.uuid === ClassifierEventCharacteristic){
+                                    console.log("cladfkljalda");
+                                    let classifierCharacteristic = characteristic;
+                                    classifierCharacteristic.addEventListener('characteristicvaluechanged', handleClassifierEvents);
+                                    classifierCharacteristic.startNotifications();
+                                }
+
                                 if (characteristic.uuid === FirmwareVersionCharacteristic){
                                     characteristic.readValue().then(value => {
                                         var buf = new Uint16Array(value.buffer);
@@ -61,7 +88,7 @@
                                 };
 
                                 if (characteristic.uuid === BatteryCharacteristic){
-                                    batteryLevelCharacteristic = characteristic;
+                                    let batteryLevelCharacteristic = characteristic;
                                     batteryLevelCharacteristic.addEventListener('characteristicvaluechanged', handleBatteryLevelChanged);
                                     batteryLevelCharacteristic.startNotifications()
                                     batteryLevelCharacteristic.readValue();
@@ -80,11 +107,20 @@
                 document.getElementById('connect').style.backgroundColor = 'white';
                 document.getElementById('connect').style.borderColor = 'DeepSkyBlue';
                 document.getElementById('connect').innerHTML = 'Connect to Myo';
+                console.log("Myo Disconnected");
             }
 
             function handleBatteryLevelChanged(event) {
                 let batteryLevel = event.target.value.getUint8(0);
                 document.getElementById('battery').innerHTML = 'Battery Level is: '+ batteryLevel +'%';
+            }
+
+            function handleClassifierEvents(event){
+                console.log(event);
+            }
+ 
+            function handleIMUEvents(event){
+                console.log(event);
             }
                                 
         </script>
@@ -92,4 +128,4 @@
         <div id="firmware"></div>
         <div id="battery"></div>
     </body>
-</html>
+</html>                               
