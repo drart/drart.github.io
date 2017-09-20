@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <style>
+            html {
+                font-size: 16px;
+
+            }
+            .button {
+                background-color: white; 
+                border: 3px solid DeepSkyBlue;
+            }
+            div {
+                padding: 15px 32px;
+                margin: auto;
+                text-align: center;
+                text-decoration: none;
+            }
+        </style>
+	<script src="serial.js"></script>
+    </head>
+    <body>
+        <div id ="connect" class="button">Connect to Arduino</div>
+        <div id ="sender" class="button">Ping Arduino</div>
+        <script>
+		(function(){
+			
+			var port;
+
+			var connectbutton = document.getElementById("connect");
+			var pingbutton= document.getElementById("sender");
+			
+			connectbutton.addEventListener('click', function(){		
+				serial.requestPort();	
+
+				serial.getPorts(ports =>{
+					console.log("kjfaljadf");
+					if(ports.length > 0){
+						port = ports[0];
+						connect();
+					}
+					else{
+						console.log(ports);
+					}
+				});	
+
+			});
+			function connect(){
+				port.connect().then(()=>{
+					console.log(port);
+				});
+			}
+
+
+
+		})();
+        </script>
+    </body>
+</html>                               
