@@ -29,29 +29,53 @@
 			var connectbutton = document.getElementById("connect");
 			var pingbutton= document.getElementById("sender");
 			
-			connectbutton.addEventListener('click', function(){		
-				serial.requestPort();	
-
-				serial.getPorts(ports =>{
-					console.log("kjfaljadf");
-					if(ports.length > 0){
-						port = ports[0];
-						connect();
-					}
-					else{
-						console.log(ports);
-					}
-				});	
-
-			});
-			function connect(){
-				port.connect().then(()=>{
-					console.log(port);
+			    function connect() {
+			      port.connect().then(() => {
+				console.log(port);
+				connectbutton.textContent = 'Disconnect';
+				port.onReceive = data => {
+				  let textDecoder = new TextDecoder();
+				}
+				port.onReceiveError = error => {
+				  console.log('Receive error: ' + error);
+				};
+			      }, error => {
+				console.log('Connection error: ' + error);
+			      });
+			    };
+				// requesting ports must be done through a user action
+			    connectbutton.addEventListener('click', function() {
+				console.log(port);
+				console.log("the device is open: " +port.device_.opened);
+			      if (port.device_.opened) {
+				port.disconnect();
+				connectbutton.textContent = 'Connect';
+			      } else {
+				serial.requestPort().then(selectedPort => {
+				  port = selectedPort;
+				  connect();
+				}).catch(error => {
+				  console.log('Connection error: ' + error);
 				});
-			}
+			      }
+			    });
 
+			    // on page start check to see if devices are already allowed
+			    serial.getPorts().then(ports => {
+			      if (ports.length == 0) {
+				console.log('No devices found.');
+			      } else {
+				port = ports[0]; // connect to the first allowable port
+				connect();
+			      }
+			    });
 
-
+			sender.addEventListener('click', function(){
+				if (port !== undefined){
+					let textencoder = new TextEncoder();
+					port.send(textencoder.encode('test'));	
+				}	
+			});
 		})();
         </script>
     </body>
