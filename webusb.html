@@ -1,82 +1,94 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <style>
-            html {
-                font-size: 16px;
+        <title>Console</title>
+        <script src="serial.js"></script>
+        <!--script src="node_modules/browserify-johnny-five/build/browserify-johnny-five.js"></script-->
+        <script>
 
+(function() {
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', event => {
+        let connectButton = document.querySelector("#connect");
+        let statusDisplay = document.querySelector('#status');
+        let port = null;
+
+        let slider = document.getElementById("slider");
+
+        let encoder = new TextEncoder()
+
+        function connect() {
+            port.connect().then(() => {
+                statusDisplay.textContent = '';
+                connectButton.textContent = 'Disconnect';
+
+                //let encoder = new TextEncoder()
+
+                // send some bytes to the arduino
+                /*
+                port.send(encoder.encode("H"));
+                setTimeout(function(){
+                    port.send(encoder.encode("H"));
+                    console.log('kjfl');
+                }, 1000);
+                */
+
+                port.onReceive = data => {
+                    let textDecoder = new TextDecoder();
+                    console.log(data.getUint8());
+                    console.log(textDecoder.decode(data));
+                }
+                port.onReceiveError = error => {
+                    console.error(error);
+                };
+            }, error => {
+                statusDisplay.textContent = error;
+            });
+        }
+
+        connectButton.addEventListener('click', function() {
+            if (port !== null) {
+                port.disconnect();
+                connectButton.textContent = 'Connect';
+                statusDisplay.textContent = '';
+                port = null; // why set this to null? 
+            } else {
+                serial.requestPort().then(selectedPort => {
+                    port = selectedPort;
+                    connect();
+                }).catch(error => {
+                    statusDisplay.textContent = error;
+                });
             }
-            .button {
-                background-color: white; 
-                border: 3px solid DeepSkyBlue;
+        });
+
+
+        slider.addEventListener('change', function() {
+            var mystring = parseInt(this.value);
+            console.log(mystring);
+            if (port !== null){
+                port.send(encoder.encode(mystring));
             }
-            div {
-                padding: 15px 32px;
-                margin: auto;
-                text-align: center;
-                text-decoration: none;
+        });
+
+        serial.getPorts().then(ports => {
+            if (ports.length == 0) {
+                statusDisplay.textContent = 'No device found.';
+            } else {
+                statusDisplay.textContent = 'Connecting...';
+                port = ports[0];
+                connect();
             }
-        </style>
-	<script src="serial.js"></script>
+        });
+    });
+})();
+	</script>
     </head>
     <body>
-        <div id ="connect" class="button">Connect to Arduino</div>
-        <div id ="sender" class="button">Ping Arduino</div>
-        <script>
-		(function(){
-			
-			var port;
+        <button id="connect">Connect</button>
+        <span id="status"></span>
 
-			var connectbutton = document.getElementById("connect");
-			var pingbutton= document.getElementById("sender");
-			
-			    function connect() {
-			      port.connect().then(() => {
-				console.log(port);
-				connectbutton.textContent = 'Disconnect';
-				port.onReceive = data => {
-				  let textDecoder = new TextDecoder();
-				}
-				port.onReceiveError = error => {
-				  console.log('Receive error: ' + error);
-				};
-			      }, error => {
-				console.log('Connection error: ' + error);
-			      });
-			    };
-				// requesting ports must be done through a user action
-			    connectbutton.addEventListener('click', function() {
-				console.log(port);
-				console.log("the device is open: " +port.device_.opened);
-			      if (port.device_.opened) {
-				port.disconnect();
-				connectbutton.textContent = 'Connect';
-			      } else {
-				serial.requestPort().then(selectedPort => {
-				  port = selectedPort;
-				  connect();
-				}).catch(error => {
-				  console.log('Connection error: ' + error);
-				});
-			      }
-			    });
-
-			    // on page start check to see if devices are already allowed
-			    serial.getPorts().then(ports => {
-			      if (ports.length == 0) {
-				console.log('No devices found.');
-			      } else {
-				port = ports[0]; // connect to the first allowable port
-				connect();
-			      }
-			    });
-
-			sender.addEventListener('click', function(){
-				if (port !== undefined){
-					let textencoder = new TextEncoder();
-					port.send(textencoder.encode('test'));	
-				}	
-			});
-		})();
-        </script>
+        <input type="range" id="slider" min="0" max="255">
     </body>
-</html>                               
+</html>
