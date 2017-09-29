@@ -15,6 +15,7 @@
         let port = null;
 
         let slider = document.getElementById("slider");
+        let slider2 = document.getElementById("slider2");
 
         let encoder = new TextEncoder()
 
@@ -22,17 +23,6 @@
             port.connect().then(() => {
                 statusDisplay.textContent = '';
                 connectButton.textContent = 'Disconnect';
-
-                //let encoder = new TextEncoder()
-
-                // send some bytes to the arduino
-                /*
-                port.send(encoder.encode("H"));
-                setTimeout(function(){
-                    port.send(encoder.encode("H"));
-                    console.log('kjfl');
-                }, 1000);
-                */
 
                 port.onReceive = data => {
                     let textDecoder = new TextDecoder();
@@ -63,14 +53,23 @@
             }
         });
 
-
-        slider.addEventListener('change', function() {
-            var mystring = parseInt(this.value);
-            console.log(mystring);
+        function sendSliders(){
+            //var mystring = parseInt(this.value);
+            //console.log(mystring);
             if (port !== null){
-                port.send(encoder.encode(mystring));
+                //port.send(encoder.encode(mystring));
+
+                let values = new Uint8Array(2);
+                values[0] = parseInt(slider.value);
+                values[1] = parseInt(slider2.value);
+                port.send(values);
             }
-        });
+        }
+            
+
+
+        slider.addEventListener('change', sendSliders);
+        slider2.addEventListener('change', sendSliders);
 
         serial.getPorts().then(ports => {
             if (ports.length == 0) {
@@ -90,5 +89,6 @@
         <span id="status"></span>
 
         <input type="range" id="slider" min="0" max="255">
+        <input type="range" id="slider2" min="0" max="255">
     </body>
 </html>
